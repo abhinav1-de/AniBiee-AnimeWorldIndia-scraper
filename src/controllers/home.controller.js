@@ -1,0 +1,28 @@
+/**
+ * Home Controller
+ * Copyright (c) 2025 Basirul Akhlak Borno - https://basirulakhlak.tech/
+ * ⚠️ Educational use only. Respect copyright laws.
+ */
+
+const { BaseController } = require('./base.controller');
+const { logger } = require('../utils/logger');
+const { BadRequestError } = require('../utils/errors');
+const { HomeExtractor } = require('../extractors/home.extractor');
+
+class HomeController extends BaseController {
+  async home(_req, res, next) {
+    await this.execute(_req, res, next, async () => {
+      try {
+        const homeExtractor = new HomeExtractor();
+        const homeData = await homeExtractor.extractFromFile(null);
+
+        res.status(200).json(homeData);
+      } catch (error) {
+        logger.error('Error extracting home page data', error);
+        throw new BadRequestError('Failed to extract home page data');
+      }
+    });
+  }
+}
+
+module.exports = { HomeController };
